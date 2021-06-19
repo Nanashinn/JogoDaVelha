@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -24,15 +24,33 @@ namespace JogoDaVelha
             InitializeComponent();
         }
 
-        //true = jogador 1 X
-        //false = jogador 2 O
-        private string ChecarVez()
+        private void Form1_Load(object sender, EventArgs e)
         {
-            if (_vez)
-                return "X";
-
-            return "O";
+            foreach (var item in Controls)
+            {
+                if (item is Button btn)
+                {
+                    _btns.Add(btn);
+                }
+            }
+            _btns.Reverse();
         }
+        private void button_enter(object sender, EventArgs e)
+        {
+            var btn = (Button)sender;
+            _corAntiga = btn.BackColor;
+            btn.BackColor = Color.AliceBlue;
+        }
+
+        private void button_leave(object sender, EventArgs e)
+        {
+            var btn = (Button)sender;
+            btn.BackColor = _corAntiga;
+        }
+
+        private void button_click(object sender, EventArgs e)
+            => ColocarBloco((Button)sender);
+
 
         private void ColocarBloco(Button btn)
         {
@@ -46,6 +64,14 @@ namespace JogoDaVelha
 
             _jogadas++;
             _vez = !_vez;
+        }
+
+        private string ChecarVez()
+        {
+            if (_vez)
+                return "X";
+
+            return "O";
         }
 
         private void ChecarJogada()
@@ -102,6 +128,13 @@ namespace JogoDaVelha
 
             return false;
         }
+        
+        private void AnunciarVencedor(string vencedor)
+        {
+            ContarVitorias(vencedor);
+            MessageBox.Show($"O vencedor é o {vencedor}.");
+            ReiniciarJogo();
+        }
 
         private void ContarVitorias(string vencedor)
         {
@@ -116,13 +149,6 @@ namespace JogoDaVelha
             }
 
             AtualizarContadorVitorias();
-        }
-
-        private void AnunciarVencedor(string vencedor)
-        {
-            ContarVitorias(vencedor);
-            MessageBox.Show($"O vencedor é o {vencedor}.");
-            ReiniciarJogo();
         }
 
         private void AtualizarContadorVitorias()
@@ -140,34 +166,6 @@ namespace JogoDaVelha
             }
             _jogadas = 0;
             _vez = true;
-        }
-
-        private void button_enter(object sender, EventArgs e)
-        {
-            var btn = (Button)sender;
-            _corAntiga = btn.BackColor;
-            btn.BackColor = Color.AliceBlue;
-        }
-
-        private void button_leave(object sender, EventArgs e)
-        {
-            var btn = (Button)sender;
-            btn.BackColor = _corAntiga;
-        }
-
-        private void button_click(object sender, EventArgs e) 
-            => ColocarBloco((Button)sender);
-
-        private void Form1_Load(object sender, EventArgs e)
-        {
-            foreach (var item in Controls)
-            {
-                if (item is Button btn)
-                {
-                    _btns.Add(btn);
-                }
-            }
-            _btns.Reverse();
         }
     }
 }
