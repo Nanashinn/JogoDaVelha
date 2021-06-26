@@ -12,12 +12,12 @@ namespace JogoDaVelha
 {
     public partial class Form1 : Form
     {
-        private bool _vez = true;
-        private int _jogadas = 0;
-        private readonly int[] _vitorias = new int[2];
-        private Color _corAntiga;
         private readonly List<Button> _btns = new List<Button>();
+        private Color _corAntiga;
         private string _jogada;
+        private int _jogadas = 0;
+        private bool _vez = true;
+        private readonly int[] _vitorias = new int[2];
 
         public Form1()
         {
@@ -27,17 +27,15 @@ namespace JogoDaVelha
         private void Form1_Load(object sender, EventArgs e)
         {
             foreach (var item in Controls)
-            {
                 if (item is Button btn)
-                {
                     _btns.Add(btn);
-                }
-            }
+
             _btns.Reverse();
         }
         private void button_enter(object sender, EventArgs e)
         {
             var btn = (Button)sender;
+
             _corAntiga = btn.BackColor;
             btn.BackColor = Color.AliceBlue;
         }
@@ -45,58 +43,44 @@ namespace JogoDaVelha
         private void button_leave(object sender, EventArgs e)
         {
             var btn = (Button)sender;
+
             btn.BackColor = _corAntiga;
         }
 
         private void button_click(object sender, EventArgs e)
             => ColocarBloco((Button)sender);
 
-
         private void ColocarBloco(Button btn)
         {
-            if (btn.Text != "")
-                return;
+            if (String.IsNullOrEmpty(btn.Text))
+            {
+                _jogada = ChecarVez();
 
-            _jogada = ChecarVez();
+                btn.Text = _jogada;
+                ChecarJogada();
 
-            btn.Text = _jogada;
-            ChecarJogada();
-
-            _jogadas++;
-            _vez = !_vez;
+                _jogadas++;
+                _vez = !_vez;
+            }
         }
 
         private string ChecarVez()
-        {
-            if (_vez)
-                return "X";
-
-            return "O";
-        }
-
+            => _vez ? "X" : "O";
+        
         private void ChecarJogada()
         {
             if (ChecarDirecoes())
-            {
                 AnunciarVencedor(_jogada);
-                return;
-            }
-
-            if (_jogadas == 9)
+            else if (_jogadas == 9)
             {
                 MessageBox.Show("Ocorreu um empate.");
                 ReiniciarJogo();
             }
         }
-
+            
         private bool ChecarDirecoes()
-        {
-            if (ChecarHorizontais() || ChecarVerticais() || ChecarDiagonais())
-                return true;
-
-            return false;
-        }
-
+           => ChecarHorizontais() || ChecarVerticais() || ChecarDiagonais();
+        
         private bool ChecarHorizontais()
         {
             int soma = 1;
@@ -120,14 +104,10 @@ namespace JogoDaVelha
 
             return false;
         }
-        
-        private bool ChecarDiagonais()
-        {
-            if (button1.Text == _jogada && button5.Text == _jogada && button9.Text == _jogada) return true;
-            else if (button3.Text == _jogada && button5.Text == _jogada && button7.Text == _jogada) return true;
 
-            return false;
-        }
+        private bool ChecarDiagonais()
+            => button1.Text == _jogada && button5.Text == _jogada && button9.Text == _jogada ||
+               button3.Text == _jogada && button5.Text == _jogada && button7.Text == _jogada;
         
         private void AnunciarVencedor(string vencedor)
         {
